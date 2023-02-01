@@ -8,12 +8,6 @@ conn = psycopg2.connect(
             host = "localhost",
             port = "5432")
 
-
-
-# cur.execute("SELECT id, name, address, salary  from COMPANY")
-# rows = cur.fetchall()
-
-
 app = Flask(__name__)
 
 @app.route("/")
@@ -47,5 +41,19 @@ def insert():
             cur = conn.cursor()
             sql = "INSERT INTO student(fname,lname,phone) VALUES (%s,%s,%s)"
             cur.execute(sql,(fname,lname,phone))
+            conn.commit()
+        return redirect(url_for('showData'))
+
+@app.route("/update",methods=['POST'])
+def update():
+    if request.method=="POST":
+        fname = request.form['fname']
+        lname = request.form['lname']
+        phone = request.form['phone']
+        id = request.form['id']
+        with conn:
+            cur = conn.cursor()
+            sql = "UPDATE student SET fname = %s , lname = %s , phone = %s WHERE id = %s"
+            cur.execute(sql,(fname,lname,phone,id))
             conn.commit()
         return redirect(url_for('showData'))
